@@ -16,8 +16,8 @@ def extract_data(id, filename):
 
     for question, op1, op2, op3, op4, ans in zip(questions, options_1, options_2, options_3, options_4, answers):
         Question.objects.create(
-            quiz_base=Quiz.objects.get(id=id),
-            question=question,
+            quiz=Quiz.objects.get(id=id),
+            title=question,
             option_1=op1,
             option_2=op2,
             option_3=op3,
