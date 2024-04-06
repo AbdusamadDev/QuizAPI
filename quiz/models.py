@@ -1,6 +1,6 @@
 from django.db import models
 from uuid import uuid4
-
+from django.contrib.auth.models import User
 
 class CustomBaseMode(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
@@ -10,10 +10,9 @@ class CustomBaseMode(models.Model):
         abstract = True
 
 
-
 class Quiz(CustomBaseMode):
     uuid = models.UUIDField(unique=True, default=uuid4)
-    teacher = models.ForeignKey('Teacher', on_delete=models.SET_NULL)
+    teacher = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     title = models.CharField(max_length=200)
     description = models.TextField()
     begin_date = models.DateTimeField()
@@ -26,7 +25,7 @@ class Quiz(CustomBaseMode):
 
 
 class Question(CustomBaseMode):
-    quiz = models.ForeignKey('Quiz', on_delete=models.SET_NULL)
+    quiz = models.ForeignKey("Quiz", on_delete=models.SET_NULL, null=True)
     title = models.CharField(max_length=200)
     option_1 = models.CharField(max_length=200)
     option_2 = models.CharField(max_length=200)
@@ -36,5 +35,3 @@ class Question(CustomBaseMode):
 
     def __str__(self) -> str:
         return f"{self.quiz} -> {self.title}"
-
-
