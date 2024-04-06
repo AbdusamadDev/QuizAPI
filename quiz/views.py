@@ -26,7 +26,13 @@ class AddQuizAPIView(generics.CreateAPIView):
         serializer.save()
 
 
-class QuizAPIView(generics.ListAPIView, generics.UpdateAPIView):
+class QuizAPIView(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Quiz.objects.all()
+    serializer_class = serializers.QuizSerializer
+
+
+class EditQuizAPIView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Quiz.objects.all()
     serializer_class = serializers.QuizSerializer
