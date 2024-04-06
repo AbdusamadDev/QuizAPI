@@ -23,6 +23,5 @@ class Exam(models.Model):
 class Result(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4)
     exam = models.ForeignKey(Exam, on_delete=models.SET_NULL, null=True, blank=True)
-    score = models.FloatField()
-
+    score = models.FloatField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now=True)
