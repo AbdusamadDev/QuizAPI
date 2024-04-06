@@ -13,8 +13,10 @@ class AddQuizAPIView(generics.CreateAPIView):
     serializer_class = serializers.QuizSerializer
 
 
-class QuizzesAPIView(generics.ListAPIView):
+class QuizAPIView(generics.ListAPIView, generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Quiz.objects.all()
     serializer_class = serializers.QuizSerializer
+    lookup_field = 'id'
 
+    
