@@ -4,6 +4,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
+
+from quiz.utils import extract_data
 from .models import Quiz, Question
 from accounts.models import Teacher
 from . import serializers
@@ -56,5 +58,7 @@ class ExportQuestionAPIView(APIView):
     permission_classes = [IsAuthenticated]
     
     def post(self, request):
-        pass
+        quiz_id = request.data.get('quiz_id')
+        file = request.data.get('file')
+        extract_data(quiz_id, file)
     
