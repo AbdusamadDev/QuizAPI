@@ -9,10 +9,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     path(f'{api_name}/accounts/', include('accounts.urls')),
-    # path(f'{api_name}/exam/', include('exam.urls')),
+    path(f'{api_name}/exam/', include('exam.urls')),
     path(f'{api_name}/quiz/', include('quiz.urls')),
 
     re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
     re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
 ]
-
