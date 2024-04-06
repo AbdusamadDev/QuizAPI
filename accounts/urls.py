@@ -4,6 +4,9 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
+from .views import testing
+
+
 urlpatterns = [
     path(
         "token/refresh/", TokenRefreshView.as_view(), name="token_refresh"
@@ -11,4 +14,5 @@ urlpatterns = [
     path(
         "token/", TokenObtainPairView.as_view(), name="token_obtain_pair"
     ),  # bu birinchi marta avtorizatsiya qilganda beriladigan access & refresh token
+    path("test/", testing),
 ]
