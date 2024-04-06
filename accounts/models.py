@@ -16,4 +16,4 @@ class Teacher(AbstractUser):
     state = models.BooleanField(default=False)
     fullname = models.CharField(max_length=100, default="...")
     USERNAME_FIELD = "phonenumber"
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS = ['username', 'phonenumber', 'fullname']
