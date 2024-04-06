@@ -5,12 +5,12 @@ from .models import Exam
 
 
 from quiz.models import Question, Quiz
-
+from quiz.serializers import QuestionSerializer
 
 class ExamSerializer(ModelSerializer):
+    questions = QuestionSerializer(many = True, read_only = True, required = False)
     class Meta:
         model = Exam
-        # fields = ['student_fullname', 'student_group', 'quiz']
         fields = "__all__"
 
     def validate(self, attrs):
@@ -25,7 +25,6 @@ class ExamSerializer(ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        # print(11111111111111111111, uuid)
         from datetime import datetime, timedelta
         from random import sample
         
@@ -39,11 +38,14 @@ class ExamSerializer(ModelSerializer):
 
         questions = list(Question.objects.filter(quiz = quiz))
 
-        random_questions = sample(questions, quiz.limit_questions)
-        
+        if len(questions)> quiz.limit_questions:
+            random_questions = sample(questions, quiz.limit_questions)
+        else:
+            random_questions = sample(questions, len(quiz.limit_questions))
+
         answers = '['
         for q in random_questions:
-            answers += q.answer + ','
+            answers += str(q.answer) + ','
         answers+=']'
 
         validated_data['questions'] = random_questions
