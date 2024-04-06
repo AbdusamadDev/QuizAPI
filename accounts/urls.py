@@ -4,7 +4,7 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
-from .views import TeacherAuthViewSet
+from .views import TeacherRegistrationAPIView, test
 
 
 urlpatterns = [
@@ -14,16 +14,17 @@ urlpatterns = [
     path(
         "token/", TokenObtainPairView.as_view(), name="token_obtain_pair"
     ),  # bu birinchi marta avtorizatsiya qilganda beriladigan access & refresh token
-    path("register/", TeacherAuthViewSet.as_view({"get": "list", "post": "create"})),
-    path(
-        "teachers/<int:pk>/",
-        TeacherAuthViewSet.as_view(
-            {
-                "get": "details",
-                "put": "update",
-                "patch": "partial_update",
-                "delete": "destroy",
-            }
-        ),
-    ),
+    path("register/", TeacherRegistrationAPIView.as_view()),
+    path("test/", test),
+    # path(
+    #     "teachers/<int:pk>/",
+    #     TeacherAuthViewSet.as_view(
+    #         {
+    #             "get": "details",
+    #             "put": "update",
+    #             "patch": "partial_update",
+    #             "delete": "destroy",
+    #         }
+    #     ),
+    # ),
 ]
