@@ -61,4 +61,5 @@ class ImportQuestionAPIView(APIView):
         quiz_id = request.data.get('quiz_id')
         file = request.data.get('file')
         extract_data(quiz_id, file)
+        return Response({"recieved": True}, status=status.HTTP_200_OK)
     
