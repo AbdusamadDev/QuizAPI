@@ -19,4 +19,17 @@ class QuizAPIView(generics.ListAPIView, generics.UpdateAPIView):
     serializer_class = serializers.QuizSerializer
     lookup_field = 'id'
 
+
+class AddQuestionAPIView(generics.CreateAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Quiz.objects.all()
+    serializer_class = serializers.QuestionSerializer
+
+
+class QuestionAPIView(generics.ListAPIView, generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Quiz.objects.all()
+    serializer_class = serializers.QuestionSerializer
+    lookup_field = 'id'
+
     
