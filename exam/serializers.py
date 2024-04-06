@@ -1,7 +1,7 @@
 from rest_framework.serializers import ModelSerializer
 from rest_framework.exceptions import APIException
 
-from .models import Exam
+from .models import Exam, Result
 
 
 from quiz.models import Question, Quiz
@@ -54,4 +54,32 @@ class ExamSerializer(ModelSerializer):
         validated_data['answers'] = answers
 
         return super().create(validated_data)
-    
+
+
+class CheckExamSerializer(ModelSerializer):
+    class Meta:
+        model = Result
+        fields = "__all__"
+
+    def validate(self, attrs):
+        try:
+            uuid = self.context.get('uuid')
+            exam = Exam.objects.get(uuid = uuid)
+            from datetime import datetime, timedelta
+            end_date = datetime(exam.end_date.year, exam.end_date.month, exam.end_date.day, exam.end_date.hour, exam.end_date.minute, exam.end_date.second, exam.end_date.microsecond)
+            start_time = datetime(exam.begin_date.year, exam.begin_date.month, exam.begin_date.day, exam.begin_date.hour, exam.begin_date.minute, exam.begin_date.second, exam.begin_date.microsecond)
+            now = datetime.now()
+            solving_time = now - start_time
+            exam.solving_time = int(solving_time.seconds / 60)
+            exam.save()
+            if end_date <= now:
+                attrs['exam'] = exam
+            else:
+                exam.status = True
+                exam.save()
+                return APIException({"Times": "Wrong time"})
+                
+        except:
+            raise APIException({"uuid": "Wring uuid"})
+        
+        return attrs
