@@ -46,6 +46,9 @@ class Teacher(AbstractUser):
         validators=[phone_regex], max_length=21, unique=True, default="+123456789"
     )
 
+    username = None
+    email = None
+
     # required
     date_joined    = models.DateTimeField(default=datetime.now)
     last_login     = models.DateTimeField(default=datetime.now)
