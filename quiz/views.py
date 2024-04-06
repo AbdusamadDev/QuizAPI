@@ -54,7 +54,7 @@ class QuestionAPIView(generics.ListAPIView, generics.UpdateAPIView):
     lookup_field = 'id'
 
 
-class ExportQuestionAPIView(APIView):
+class ImportQuestionAPIView(APIView):
     permission_classes = [IsAuthenticated]
     
     def post(self, request):
