@@ -1,4 +1,5 @@
 from django.db import models
+from uuid import uuid4
 
 
 class CustomBaseMode(models.Model):
@@ -11,7 +12,8 @@ class CustomBaseMode(models.Model):
 
 
 class Quiz(CustomBaseMode):
-    teacher = models.ForeignKey('Teacher', on_delete=models.CASCADE)
+    uuid = models.UUIDField(unique=True, default=uuid4)
+    teacher = models.ForeignKey('Teacher', on_delete=models.SET_NULL)
     title = models.CharField(max_length=200)
     description = models.TextField()
     begin_date = models.DateTimeField()
@@ -24,7 +26,7 @@ class Quiz(CustomBaseMode):
 
 
 class Question(CustomBaseMode):
-    quiz = models.ForeignKey('Quiz', on_delete=models.CASCADE)
+    quiz = models.ForeignKey('Quiz', on_delete=models.SET_NULL)
     title = models.CharField(max_length=200)
     option_1 = models.CharField(max_length=200)
     option_2 = models.CharField(max_length=200)
