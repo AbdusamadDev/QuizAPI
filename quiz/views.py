@@ -6,12 +6,23 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from .models import Quiz, Question
 from . import serializers
+from jwt import decode
+from django.conf import settings
 
 
 class AddQuizAPIView(generics.CreateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Quiz.objects.all()
     serializer_class = serializers.QuizSerializer
+
+    def perform_create(self, serializer):
+        jwt_token = self.request.headers.get('Authorization', '').split(' ')[1]
+        decoded_token = decode(jwt_token, settings.SECRET_KEY, algorithms=['HS256'])
+        user_id = decoded_token['user_id']
+    
+        serializer.validated_data['teacher'] = user_id
+        
+        serializer.save()
 
 
 class QuizAPIView(generics.ListAPIView, generics.UpdateAPIView):
