@@ -4,6 +4,8 @@ from uuid import uuid4
 from accounts.models import Teacher
 
 
+from quiz.validators import validate_answer_number
+
 class CustomBaseMode(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -33,7 +35,7 @@ class Question(CustomBaseMode):
     option_2 = models.CharField(max_length=200)
     option_3 = models.CharField(max_length=200)
     option_4 = models.CharField(max_length=200)
-    answer = models.CharField(max_length=200)
+    answer = models.IntegerField(validators=[validate_answer_number])
 
     def __str__(self) -> str:
         return f"{self.quiz} -> {self.title}"

@@ -7,3 +7,10 @@ class QuizSerializer(ModelSerializer):
     class Meta:
         model = Quiz
         fields = '__all__'
+
+
+class QuestionSerializer(ModelSerializer):
+
+    class Meta:
+        model = Question
+        fields = '__all__'
