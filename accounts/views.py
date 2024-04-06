@@ -18,7 +18,6 @@ class TeacherRegistrationAPIView(CreateAPIView):
         if serializer.is_valid():
             teacher = serializer.save()
             teacher.set_password(request.data.get("password"))
-            teacher.is_active()
             teacher.save()
 
             # Generating JWT token upon successful creation
