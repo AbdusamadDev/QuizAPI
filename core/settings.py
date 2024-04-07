@@ -83,6 +83,10 @@ DATABASES = {
     }
 }
 AUTH_USER_MODEL = "accounts.Teacher"
+# AUTHENTICATION_BACKENDS = [
+#     "accounts.backends.CustomAuthenticationBackend",
+# ]
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",

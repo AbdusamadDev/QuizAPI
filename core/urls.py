@@ -4,7 +4,6 @@ from django.views.static import serve
 from django.contrib import admin
 
 api_name = 'api'
-
 urlpatterns = [
     path('admin/', admin.site.urls),
 

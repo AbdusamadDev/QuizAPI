@@ -1,4 +1,3 @@
-
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -19,12 +18,12 @@ class AddQuizAPIView(generics.CreateAPIView):
     serializer_class = serializers.QuizSerializer
 
     def perform_create(self, serializer):
-        jwt_token = self.request.headers.get('Authorization', '').split(' ')[1]
-        decoded_token = decode(jwt_token, settings.SECRET_KEY, algorithms=['HS256'])
-        user_id = decoded_token['user_id']
-    
-        serializer.validated_data['teacher'] = Teacher.objects.get(id=user_id)
-        
+        # Keep everything simple
+        user_id = self.request.user.id
+        # jwt_token = self.request.headers.get('Authorization', '').split(' ')[1]
+        # decoded_token = decode(jwt_token, settings.SECRET_KEY, algorithms=['HS256'])
+        # user_id = decoded_token['user_id']
+        serializer.validated_data["teacher"] = Teacher.objects.get(id=user_id)
         serializer.save()
 
 
@@ -38,7 +37,7 @@ class EditQuizAPIView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Quiz.objects.all()
     serializer_class = serializers.QuizSerializer
-    lookup_field = 'id'
+    lookup_field = "id"
 
 
 class AddQuestionAPIView(generics.CreateAPIView):
@@ -51,24 +50,24 @@ class QuestionAPIView(generics.ListAPIView, generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Question.objects.all()
     serializer_class = serializers.QuestionSerializer
-    lookup_field = 'id'
+    lookup_field = "id"
 
 
 class ImportQuestionAPIView(APIView):
     permission_classes = [IsAuthenticated]
-    
+
     def post(self, request):
-        quiz_id = request.data.get('quiz_id')
-        file = request.data.get('file')
+        quiz_id = request.data.get("quiz_id")
+        file = request.data.get("file")
         extract_data(quiz_id, file)
         return Response({"recieved": True}, status=status.HTTP_200_OK)
-    
+
 
 class ExportQuestionAPIView(APIView):
     permission_classes = [IsAuthenticated]
-    
+
     def get(self, request):
-        quiz_id = request.data.get('quiz_id')
+        quiz_id = request.data.get("quiz_id")
         return Response({"recieved": True}, status=status.HTTP_200_OK)
 
 
@@ -76,5 +75,4 @@ class DeleteQuizAPIView(generics.DestroyAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Quiz.objects.all()
     serializer_class = serializers.QuizSerializer
-    lookup_field = 'id'
-
+    lookup_field = "id"

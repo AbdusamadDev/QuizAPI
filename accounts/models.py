@@ -1,6 +1,6 @@
-from datetime import datetime
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.core.validators import RegexValidator
+from datetime import datetime
 from django.db import models
 
 
