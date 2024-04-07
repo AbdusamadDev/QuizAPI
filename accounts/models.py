@@ -52,10 +52,9 @@ class Teacher(AbstractUser):
     date_joined    = models.DateTimeField(default=datetime.now)
     last_login     = models.DateTimeField(default=datetime.now)
     is_admin       = models.BooleanField(default=False)
-    is_staff       = models.BooleanField(default=False)
-    is_active      = models.BooleanField(default=False)
+    is_staff       = models.BooleanField(default=True)
+    is_active      = models.BooleanField(default=True)
     is_superadmin  = models.BooleanField(default=False)
-    state = models.BooleanField(default=False)
 
     USERNAME_FIELD = "phonenumber"
     REQUIRED_FIELDS = ['fullname']
