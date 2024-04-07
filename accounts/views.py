@@ -38,6 +38,3 @@ class TeacherRegistrationAPIView(CreateAPIView):
 @permission_classes([IsAuthenticated])
 def test(request):
     return Response({"data": "messdfsdf"})
-
-
-# eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzEyNDAyNTYyLCJpYXQiOjE3MTIzOTg5NjIsImp0aSI6IjI3OTNkNzExNjQxMzQyNmZhM2RhZWQ5OWEyNzY0ZWNiIiwidXNlcl9pZCI6MX0.3zm-j8pG778ULEOi-CnvsmqkvOaMEey_s3sknPPTUbw
