@@ -8,7 +8,7 @@ from .models import Teacher
 class TeacherSerializer(serializers.ModelSerializer):
     class Meta:
         model = Teacher
-        fields = ["phonenumber", "password", "state", "fullname"]
+        fields = ["phonenumber", "password", "fullname"]
         extra_kwargs = {"username": {"required": False, "allow_blank": True}}
 
     def validate_password(self, password):
