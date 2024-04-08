@@ -2,12 +2,6 @@ from rest_framework.serializers import ModelSerializer
 from .models import Quiz, Question
 
 
-class QuizSerializer(ModelSerializer):
-
-    class Meta:
-        model = Quiz
-        fields = '__all__'
-
 
 class QuestionSerializer(ModelSerializer):
 
@@ -19,3 +13,9 @@ class QuestionSerializer(ModelSerializer):
         redata = super().to_representation(instance)
         redata.pop('answer')
         return redata
+    
+
+class QuizSerializer(ModelSerializer):
+    class Meta:
+        model = Quiz
+        fields = '__all__'
