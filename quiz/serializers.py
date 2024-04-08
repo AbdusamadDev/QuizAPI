@@ -13,4 +13,9 @@ class QuestionSerializer(ModelSerializer):
 
     class Meta:
         model = Question
-        exclude = ['answer']
+        fields = '__all__'
+
+    def to_representation(self, instance):
+        redata = super().to_representation(instance)
+        redata.pop('answer')
+        return redata
