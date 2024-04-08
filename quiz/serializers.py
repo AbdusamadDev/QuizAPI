@@ -22,5 +22,7 @@ class QuizSerializer(ModelSerializer):
 
     def to_representation(self, instance):
         redata = super().to_representation(instance)
+        redata['begin_date'] = instance.formatted_begin_date
+        redata['end_date'] = instance.formatted_begin_date
         redata['questions'] = QuestionSerializer(instance=instance.question_set.all(), many=True).data
         return redata
