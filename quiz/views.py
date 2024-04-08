@@ -21,10 +21,10 @@ class AddQuizAPIView(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         # Keep everything simple
-        user_id = self.request.user.id
-        # jwt_token = self.request.headers.get('Authorization', '').split(' ')[1]
-        # decoded_token = decode(jwt_token, settings.SECRET_KEY, algorithms=['HS256'])
-        # user_id = decoded_token['user_id']
+        # user_id = self.request.user.id
+        jwt_token = self.request.headers.get('Authorization', '').split(' ')[1]
+        decoded_token = decode(jwt_token, settings.SECRET_KEY, algorithms=['HS256'])
+        user_id = decoded_token['user_id']
         serializer.validated_data["teacher"] = Teacher.objects.get(id=user_id)
         serializer.save()
 
