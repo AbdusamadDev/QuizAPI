@@ -51,7 +51,7 @@ class ExamSerializer(ModelSerializer):
         if len(questions) > quiz.limit_questions:
             random_questions = sample(questions, quiz.limit_questions)
         else:
-            random_questions = sample(questions, len(quiz.limit_questions))
+            random_questions = sample(questions, len(questions))
 
         answers = "["
         for q in random_questions:
