@@ -34,6 +34,11 @@ class QuizAPIView(generics.ListAPIView):
     queryset = Quiz.objects.all()
     serializer_class = serializers.QuizSerializer
 
+    def get_queryset(self):
+        user = self.request.user
+        return Quiz.objects.filter(teacher=user)
+
+
 
 class EditQuizAPIView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
