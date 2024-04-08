@@ -1,10 +1,12 @@
+from django.http import HttpResponse
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
+from django.shortcuts import get_object_or_404
 
-from quiz.utils import extract_data
+from quiz.utils import extract_data, generate_quiz_questions_pdf
 from .models import Quiz, Question
 from accounts.models import Teacher
 from . import serializers
@@ -68,7 +70,13 @@ class ExportQuestionAPIView(APIView):
 
     def get(self, request):
         quiz_id = request.data.get("quiz_id")
-        return Response({"recieved": True}, status=status.HTTP_200_OK)
+        # quiz = Quiz.objects.get(id=quiz_id)
+        quiz = get_object_or_404(Quiz, id=quiz_id)
+        pdf_buffer = generate_quiz_questions_pdf(quiz)
+
+        response = HttpResponse(pdf_buffer.getvalue(), content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="quiz_questions.pdf"'
+        return response
 
 
 class DeleteQuizAPIView(generics.DestroyAPIView):

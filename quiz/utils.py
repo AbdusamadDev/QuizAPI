@@ -1,5 +1,7 @@
+from io import BytesIO
 import pandas as pd
 from .models import Question, Quiz
+from reportlab.pdfgen import canvas
 
 
 def extract_data(id, filename):
@@ -24,3 +26,35 @@ def extract_data(id, filename):
             option_4=op4,
             answer=ans
         )
+
+
+def generate_quiz_questions_pdf(quiz):
+    # Assuming you have a Quiz model with id and title fields
+    questions = Question.objects.filter(quiz=quiz)
+
+    buffer = BytesIO()
+    # Create PDF
+    pdf = canvas.Canvas(buffer)
+
+    # Set up PDF content
+    pdf.drawString(100, 800, f"Quiz: {quiz.title}")
+    pdf.drawString(100, 780, "Questions:")
+
+    y_position = 760  # Initial Y position for questions
+
+    for question in questions:
+        y_position -= 20  # Move down for each question
+        pdf.drawString(100, y_position, f"Savol: {question.title}")
+        
+        # Add options
+        options = [question.option_1, question.option_2, question.option_3, question.option_4]
+        for i, option in enumerate(options, 1):
+            y_position -= 20  # Move down for each option
+            pdf.drawString(120, y_position, f"{i}: {option}")
+
+    pdf.showPage()
+    pdf.save()
+
+    buffer.seek(0)
+
+    return buffer

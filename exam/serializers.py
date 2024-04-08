@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from rest_framework.exceptions import APIException
+from rest_framework.exceptions import ValidationError
 
 from .models import Exam, Result
 
@@ -22,7 +22,7 @@ class ExamSerializer(ModelSerializer):
             attrs["quiz"] = quiz
 
         except:
-            raise APIException({"uuid": "Wring uuid"})
+            raise ValidationError({"uuid": "Wring uuid"})
 
         return attrs
 
@@ -42,10 +42,11 @@ class ExamSerializer(ModelSerializer):
             quiz.end_date.second,
             quiz.end_date.microsecond,
         )
-
         if end > end_date:
             end = end_date
-
+        if now > end_date:
+            raise ValidationError({"Time":"Quiz time is over"})
+        
         questions = list(Question.objects.filter(quiz=quiz))
 
         if len(questions) > quiz.limit_questions:
@@ -71,42 +72,73 @@ class CheckExamSerializer(ModelSerializer):
         model = Result
         fields = "__all__"
 
+    def create(self, validated_data):
+        return super().create(validated_data)
+
     def validate(self, attrs):
         try:
             uuid = self.context.get("uuid")
             exam = Exam.objects.get(uuid=uuid)
-            from datetime import datetime, timedelta
-
-            end_date = datetime(
-                exam.end_date.year,
-                exam.end_date.month,
-                exam.end_date.day,
-                exam.end_date.hour,
-                exam.end_date.minute,
-                exam.end_date.second,
-                exam.end_date.microsecond,
-            )
-            start_time = datetime(
-                exam.begin_date.year,
-                exam.begin_date.month,
-                exam.begin_date.day,
-                exam.begin_date.hour,
-                exam.begin_date.minute,
-                exam.begin_date.second,
-                exam.begin_date.microsecond,
-            )
-            now = datetime.now()
-            solving_time = now - start_time
-            exam.solving_time = int(solving_time.seconds / 60)
-            exam.save()
-            if end_date <= now:
-                attrs["exam"] = exam
-            else:
-                exam.status = True
-                exam.save()
-                return APIException({"Times": "Wrong time"})
-
         except:
-            raise APIException({"uuid": "Wring uuid"})
+            raise ValidationError({"uuid": "Wring uuid"})
+        
+        from datetime import datetime, timedelta
+        end_date = datetime(
+            exam.end_date.year,
+            exam.end_date.month,
+            exam.end_date.day,
+            exam.end_date.hour,
+            exam.end_date.minute,
+            exam.end_date.second,
+            exam.end_date.microsecond,
+        )
+        start_time = datetime(
+            exam.begin_date.year,
+            exam.begin_date.month,
+            exam.begin_date.day,
+            exam.begin_date.hour,
+            exam.begin_date.minute,
+            exam.begin_date.second,
+            exam.begin_date.microsecond,
+        )
+        now = datetime.now()
+        solving_time = now - start_time
+        exam.solving_time = int(solving_time.seconds / 60)
+        exam.save()
+
+        if end_date >= now:
+            attrs["exam"] = exam
+        else:
+            exam.status = True
+            exam.save()
+            raise ValidationError({"Time": "Exam time is over"})
+
+        correct_answers = 0
+        try:
+            answers = self.initial_data['answers']
+        except:
+            
+            attrs['score'] = 0.00
+            return attrs
+        
+        for item in answers:
+            qid = item['qid']
+            ans = item['ans']
+            try:
+                quiz = Question.objects.get(quiz = exam.quiz, id = qid)
+                if quiz.answer == ans:
+                    correct_answers += 1
+            except:
+                raise ValidationError({"Data": "Some questions are not related to this exam!"})
+        
+        count_q = len(answers)
+        attrs['score'] = (100 / count_q) * correct_answers
+
+        
+
+
+        
+        
 
         return attrs
+
