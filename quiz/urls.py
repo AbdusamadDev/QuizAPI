@@ -10,4 +10,5 @@ urlpatterns = [
     path('delete/<int:id>/', views.DeleteQuizAPIView.as_view()),
     path('edit_question/', views.QuestionAPIView.as_view()),
     path('import_questions/', views.ImportQuestionAPIView.as_view()),
+    path('export_questions/', views.ExportQuestionAPIView.as_view()),
 ]

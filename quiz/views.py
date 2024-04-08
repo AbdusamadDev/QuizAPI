@@ -1,10 +1,11 @@
+from django.http import HttpResponse
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 
-from quiz.utils import extract_data
+from quiz.utils import extract_data, generate_quiz_questions_pdf
 from .models import Quiz, Question
 from accounts.models import Teacher
 from . import serializers
@@ -64,11 +65,15 @@ class ImportQuestionAPIView(APIView):
 
 
 class ExportQuestionAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def get(self, request):
         quiz_id = request.data.get("quiz_id")
-        return Response({"recieved": True}, status=status.HTTP_200_OK)
+        pdf_buffer = generate_quiz_questions_pdf(quiz_id)
+
+        response = HttpResponse(pdf_buffer.getvalue(), content_type='application/pdf')
+        response['Content-Disposition'] = 'attachment; filename="quiz_questions.pdf"'
+        return response
 
 
 class DeleteQuizAPIView(generics.DestroyAPIView):
