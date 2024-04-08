@@ -28,9 +28,8 @@ def extract_data(id, filename):
         )
 
 
-def generate_quiz_questions_pdf(quiz_id):
+def generate_quiz_questions_pdf(quiz):
     # Assuming you have a Quiz model with id and title fields
-    quiz = Quiz.objects.get(id=quiz_id)
     questions = Question.objects.filter(quiz=quiz)
 
     buffer = BytesIO()
