@@ -29,11 +29,11 @@ class Quiz(CustomBaseMode):
 
     @property
     def formatted_begin_date(self):
-        return self.begin_date.strftime('%Y-%m-%dT%H:M')
+        return self.begin_date.strftime('%Y-%m-%dT%H:%M')
 
     @property
     def formatted_end_date(self):
-        return self.end_date.strftime('%Y-%m-%dT%H:M')
+        return self.end_date.strftime('%Y-%m-%dT%H:%M')
 
 
 class Question(CustomBaseMode):
