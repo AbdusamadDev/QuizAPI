@@ -11,4 +11,5 @@ urlpatterns = [
     path("edit_question/", views.QuestionAPIView.as_view()),
     path("import_questions/", views.ImportQuestionAPIView.as_view()),
     path("export_questions/", views.ExportQuestionAPIView.as_view()),
+    path("detail/<uuid:uuid>/", views.QuizDetailsAPIView.as_view()),
 ]

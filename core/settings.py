@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "accounts",
     "exam",
+    # "rest_framework_simplejwt.token_blacklist",
     "quiz",
     "rest_framework",
     "rest_framework_simplejwt",
