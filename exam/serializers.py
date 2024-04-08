@@ -53,15 +53,15 @@ class ExamSerializer(ModelSerializer):
         else:
             random_questions = sample(questions, len(questions))
 
-        answers = "["
-        for q in random_questions:
-            answers += str(q.answer) + ","
-        answers += "]"
+        # answers = "["
+        # for q in random_questions:
+        #     answers += str(q.answer) + ","
+        # answers += "]"
 
         validated_data["questions"] = random_questions
         validated_data["end_date"] = end
         validated_data["begin_date"] = now
-        validated_data["answers"] = answers
+        # validated_data["answers"] = answers
 
         return super().create(validated_data)
 
