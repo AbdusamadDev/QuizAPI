@@ -6,6 +6,7 @@ from .serializers import ExamSerializer, CheckExamSerializer
 
 from quiz.models import Question
 
+
 class ExampView(CreateAPIView):
     queryset = Exam.objects.all()
     serializer_class = ExamSerializer
@@ -13,15 +14,15 @@ class ExampView(CreateAPIView):
     def get_serializer_context(self):
 
         try:
-            return {'uuid': self.kwargs.get('uuid')} 
+            return {"uuid": self.kwargs.get("uuid")}
         except:
             raise ValidationError({"UUID": "Wrong uuid"})
-    
+
 
 class ExampDetailAPIView(RetrieveAPIView):
     queryset = Exam.objects.all()
     serializer_class = ExamSerializer
-    lookup_field = 'uuid'
+    lookup_field = "uuid"
 
 
 class CheckExamView(CreateAPIView):
@@ -29,10 +30,10 @@ class CheckExamView(CreateAPIView):
     serializer_class = CheckExamSerializer
 
     def get_serializer_context(self):
-        return {'uuid': self.kwargs.get('uuid')} 
+        return {"uuid": self.kwargs.get("uuid")}
 
 
 class ResultDetailAPIView(RetrieveAPIView):
     queryset = Result.objects.all()
     serializer_class = CheckExamSerializer
-    lookup_field = 'uuid'
+    lookup_field = "uuid"
