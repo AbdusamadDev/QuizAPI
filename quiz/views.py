@@ -79,8 +79,8 @@ class ExportQuestionAPIView(APIView):
         quiz = get_object_or_404(Quiz, id=quiz_id)
         pdf_buffer = generate_quiz_questions_pdf(quiz)
 
-        response = HttpResponse(pdf_buffer.getvalue(), content_type='application/pdf')
-        response['Content-Disposition'] = 'attachment; filename="quiz_questions.pdf"'
+        response = HttpResponse(pdf_buffer.getvalue(), content_type="application/pdf")
+        response["Content-Disposition"] = 'attachment; filename="quiz_questions.pdf"'
         return response
 
 
@@ -95,4 +95,3 @@ class QuizDetailsAPIView(generics.RetrieveAPIView):
     lookup_field = "uuid"
     queryset = Quiz.objects.all()
     serializer_class = serializers.QuizSerializer
-    
