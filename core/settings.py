@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "accounts",
     "exam",
+    # "rest_framework_simplejwt.token_blacklist",
     "quiz",
     "rest_framework",
     "rest_framework_simplejwt",
@@ -41,8 +42,8 @@ SIMPLE_JWT = {
     "TOKEN_TYPE_CLAIM": "token_type",
     "JTI_CLAIM": "jti",
     "SLIDING_TOKEN_REFRESH_EXP_CLAIM": "refresh_exp",
-    "SLIDING_TOKEN_LIFETIME": timedelta(minutes=5),
-    "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=1),
+    "SLIDING_TOKEN_LIFETIME": timedelta(days=1),
+    "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(weeks=1),
 }
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [

@@ -1,6 +1,9 @@
-from rest_framework.serializers import ModelSerializer
-from .models import Quiz, Question
+from rest_framework.fields import empty
+from rest_framework.serializers import ModelSerializer, SerializerMethodField
 
+from accounts.models import Teacher
+from quiz.utils import unhash_token
+from .models import Quiz, Question
 
 
 class QuestionSerializer(ModelSerializer):

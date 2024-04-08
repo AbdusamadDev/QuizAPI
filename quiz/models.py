@@ -27,6 +27,14 @@ class Quiz(CustomBaseMode):
     def __str__(self) -> str:
         return self.title
 
+    @property
+    def formatted_begin_date(self):
+        return self.begin_date.strftime('%Y-%m-%dT%H:%M')
+
+    @property
+    def formatted_end_date(self):
+        return self.end_date.strftime('%Y-%m-%dT%H:%M')
+
 
 class Question(CustomBaseMode):
     quiz = models.ForeignKey("Quiz", on_delete=models.CASCADE, null=True)
