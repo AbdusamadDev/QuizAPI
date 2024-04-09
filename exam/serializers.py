@@ -55,7 +55,7 @@ class ExamSerializer(ModelSerializer):
             end = end_date
         if now > end_date or now < start_time:
             raise ValidationError({"Time":"Quiz time is over"})
-        
+
         questions = list(Question.objects.filter(quiz=quiz))
 
         if len(questions) > quiz.limit_questions:
@@ -84,7 +84,7 @@ class CheckExamSerializer(ModelSerializer):
             exam = Exam.objects.get(uuid=uuid)
         except:
             raise ValidationError({"uuid": "Wring uuid"})
-        
+
         from datetime import datetime, timedelta
         end_date = datetime(
             exam.end_date.year,
@@ -109,7 +109,7 @@ class CheckExamSerializer(ModelSerializer):
         exam.solving_time = int(solving_time.seconds / 60)
         exam.save()
 
-        if end_date >= now:
+        if end_date <= now:
             attrs["exam"] = exam
         else:
             exam.status = True
@@ -120,10 +120,10 @@ class CheckExamSerializer(ModelSerializer):
         try:
             answers = self.initial_data['answers']
         except:
-            
+
             attrs['score'] = 0.00
             return attrs
-        
+
         for item in answers:
             qid = item['qid']
             ans = item['ans']
@@ -133,7 +133,7 @@ class CheckExamSerializer(ModelSerializer):
                     correct_answers += 1
             except:
                 raise ValidationError({"Data": "Some questions are not related to this exam!"})
-        
+
         count_q = len(answers)
         attrs['score'] = (100 / count_q) * correct_answers
 
