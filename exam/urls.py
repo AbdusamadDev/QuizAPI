@@ -6,5 +6,4 @@ urlpatterns = [
     path('detail/<str:uuid>/', ExampDetailAPIView.as_view(), name = 'exam_detail'),
     path('<str:uuid>/', ExampView.as_view(), name = 'result_create'),
     path('result/<str:uuid>/', ResultDetailAPIView.as_view(), name = 'result_detail'),
-
 ]
