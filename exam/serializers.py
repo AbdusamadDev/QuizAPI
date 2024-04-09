@@ -109,7 +109,7 @@ class CheckExamSerializer(ModelSerializer):
         exam.solving_time = int(solving_time.seconds / 60)
         exam.save()
 
-        if end_date >= now:
+        if end_date <= now:
             attrs["exam"] = exam
         else:
             exam.status = True
