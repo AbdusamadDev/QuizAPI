@@ -31,6 +31,7 @@ class CheckExamView(CreateAPIView):
 
     def get_serializer_context(self):
         return {"uuid": self.kwargs.get("uuid")}
+    
 
 
 class ResultDetailAPIView(RetrieveAPIView):

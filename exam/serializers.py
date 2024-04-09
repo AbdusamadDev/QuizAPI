@@ -66,7 +66,7 @@ class ExamSerializer(ModelSerializer):
         validated_data["questions"] = random_questions
         validated_data["end_date"] = end
         validated_data["begin_date"] = now
-
+        print(444444444444444, validated_data)
         return super().create(validated_data)
 
 
@@ -75,7 +75,6 @@ class CheckExamSerializer(ModelSerializer):
         model = Result
         fields = "__all__"
 
-    
     def validate(self, attrs):
         try:
             uuid = self.context.get("uuid")
@@ -137,10 +136,6 @@ class CheckExamSerializer(ModelSerializer):
             attrs['score'] = (100 / count_q) * correct_answers
         else:
             attrs['score'] = 0.00
-
-        attrs['quiz'] = {
-            "group": exam.student_group,
-            "fullname": exam.student_fullname
-        }
+ 
         return attrs
 
