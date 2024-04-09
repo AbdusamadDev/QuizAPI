@@ -75,9 +75,7 @@ class CheckExamSerializer(ModelSerializer):
         model = Result
         fields = "__all__"
 
-    def create(self, validated_data):
-        return super().create(validated_data)
-
+    
     def validate(self, attrs):
         try:
             uuid = self.context.get("uuid")
@@ -109,7 +107,7 @@ class CheckExamSerializer(ModelSerializer):
         exam.solving_time = int(solving_time.seconds / 60)
         exam.save()
 
-        if end_date >= now:
+        if end_date <= now:
             attrs["exam"] = exam
         else:
             exam.status = True
@@ -135,7 +133,10 @@ class CheckExamSerializer(ModelSerializer):
                 raise ValidationError({"Data": "Some questions are not related to this exam!"})
         
         count_q = len(answers)
-        attrs['score'] = (100 / count_q) * correct_answers
+        if count_q > 0:
+            attrs['score'] = (100 / count_q) * correct_answers
+        else:
+            attrs['score'] = 0.00
 
         attrs['quiz'] = {
             "group": exam.student_group,
