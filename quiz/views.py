@@ -73,7 +73,7 @@ class ImportQuestionAPIView(APIView):
 
 
 class ExportQuestionAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def get(self, request):
         quiz_id = request.GET.get("quiz_id")
