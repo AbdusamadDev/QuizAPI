@@ -6,12 +6,10 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 
-from quiz.utils import extract_data, generate_quiz_questions_pdf
+from quiz.utils import extract_data, generate_quiz_questions_pdf, unhash_token
 from .models import Quiz, Question
 from accounts.models import Teacher
 from . import serializers
-from jwt import decode
-from django.conf import settings
 
 
 class AddQuizAPIView(generics.CreateAPIView):
@@ -22,8 +20,7 @@ class AddQuizAPIView(generics.CreateAPIView):
     def perform_create(self, serializer):
         # Keep everything simple
         # user_id = self.request.user.id
-        jwt_token = self.request.headers.get('Authorization', '').split(' ')[1]
-        decoded_token = decode(jwt_token, settings.SECRET_KEY, algorithms=['HS256'])
+        decoded_token = unhash_token(self.request.headers)
         user_id = decoded_token['user_id']
         serializer.validated_data["teacher"] = Teacher.objects.get(id=user_id)
         serializer.save()
@@ -37,6 +34,11 @@ class QuizAPIView(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         return Quiz.objects.filter(teacher=user)
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = context['request']
+        return super().get_serializer_context()
 
 
 
@@ -87,6 +89,13 @@ class ExportQuestionAPIView(APIView):
 class DeleteQuizAPIView(generics.DestroyAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Quiz.objects.all()
+    serializer_class = serializers.QuizSerializer
+    lookup_field = "id"
+
+
+class DeleteQuestionAPIView(generics.DestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = Question.objects.all()
     serializer_class = serializers.QuizSerializer
     lookup_field = "id"
 

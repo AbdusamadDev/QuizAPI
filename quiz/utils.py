@@ -1,4 +1,6 @@
 from io import BytesIO
+from django.conf import settings
+from jwt import decode
 import pandas as pd
 from .models import Question, Quiz
 from reportlab.pdfgen import canvas
@@ -58,3 +60,9 @@ def generate_quiz_questions_pdf(quiz):
     buffer.seek(0)
 
     return buffer
+
+
+def unhash_token(request_header):
+    jwt_token = request_header.get('Authorization', '').split(' ')[1]
+    decoded_token = decode(jwt_token, settings.SECRET_KEY, algorithms=['HS256'])
+    return decoded_token
