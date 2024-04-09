@@ -76,7 +76,7 @@ class ExportQuestionAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        quiz_id = request.data.get("quiz_id")
+        quiz_id = request.GET.get("quiz_id")
         # quiz = Quiz.objects.get(id=quiz_id)
         quiz = get_object_or_404(Quiz, id=quiz_id)
         pdf_buffer = generate_quiz_questions_pdf(quiz)
