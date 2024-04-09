@@ -26,6 +26,7 @@ class MyAccountManager(BaseUserManager):
             phonenumber = phonenumber,
             password=password,
         )
+        user.username = user.phonenumber
         user.is_admin = True
         user.is_active = True
         user.is_staff = True
