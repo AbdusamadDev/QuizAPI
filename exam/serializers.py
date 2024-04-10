@@ -66,7 +66,6 @@ class ExamSerializer(ModelSerializer):
         validated_data["questions"] = random_questions
         validated_data["end_date"] = end
         validated_data["begin_date"] = now
-        print(444444444444444, validated_data)
         return super().create(validated_data)
 
 
@@ -76,19 +75,11 @@ class CheckExamSerializer(ModelSerializer):
         model = Result
         fields = ["id", "uuid", "score", "created_at", "exam"]
     
-    # def to_representation(self, instance):
-    #     redata = super().to_representation(instance)
-    #     redata['quiz'] = {
-    #         "quiz": {
-    #             "id": instance.exam.quiz.id,
-    #             "uuid": instance.exam.quiz.uuid,
-    #             "uuid": instance.exam.quiz.uuid,
-    #         }
-    #     }
-    #     print(111111, type(redata), redata )
-        
-    #     return redata
-    
+    def to_representation(self, instance):
+        redata = super().to_representation(instance)
+        redata['exam'].pop("questions")
+        return redata
+  
     def validate(self, attrs):
         try:
             uuid = self.context.get("uuid")
@@ -140,6 +131,8 @@ class CheckExamSerializer(ModelSerializer):
             ans = item['ans']
             try:
                 quiz = Question.objects.get(quiz = exam.quiz, id = qid)
+                if not exam.questions.filter(pk = quiz.id).exists():
+                    raise
                 if quiz.answer == ans:
                     correct_answers += 1
             except:
