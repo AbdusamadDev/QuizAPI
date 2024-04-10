@@ -71,10 +71,24 @@ class ExamSerializer(ModelSerializer):
 
 
 class CheckExamSerializer(ModelSerializer):
+    exam = ExamSerializer(many = False, read_only=True, required = False)
     class Meta:
         model = Result
-        fields = "__all__"
-
+        fields = ["id", "uuid", "score", "created_at", "exam"]
+    
+    # def to_representation(self, instance):
+    #     redata = super().to_representation(instance)
+    #     redata['quiz'] = {
+    #         "quiz": {
+    #             "id": instance.exam.quiz.id,
+    #             "uuid": instance.exam.quiz.uuid,
+    #             "uuid": instance.exam.quiz.uuid,
+    #         }
+    #     }
+    #     print(111111, type(redata), redata )
+        
+    #     return redata
+    
     def validate(self, attrs):
         try:
             uuid = self.context.get("uuid")
@@ -131,7 +145,7 @@ class CheckExamSerializer(ModelSerializer):
             except:
                 raise ValidationError({"Data": "Some questions are not related to this exam!"})
         
-        count_q = len(answers)
+        count_q = exam.quiz.limit_questions
         if count_q > 0:
             attrs['score'] = (100 / count_q) * correct_answers
         else:
