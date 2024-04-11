@@ -37,11 +37,10 @@ class QuizAPIView(generics.ListAPIView):
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
-        context['request'] = context['request']
-        return super().get_serializer_context()
-
-
-
+        context['request'] = self.request.user
+        return context
+    
+     
 class EditQuizAPIView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Quiz.objects.all()

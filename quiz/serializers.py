@@ -7,8 +7,8 @@ from .models import Quiz, Question
 
 
 class QuestionSerializer(ModelSerializer):
-    def __init__(self, instance=None, data=..., **kwargs):
-        self.user_id = kwargs.pop('user_id', None)
+    def __init__(self, instance=None, user_id = None, data=..., **kwargs):
+        self.user_id = user_id
         super().__init__(instance, data, **kwargs)
             
     class Meta:
@@ -16,16 +16,12 @@ class QuestionSerializer(ModelSerializer):
         fields = '__all__'
 
     def to_representation(self, instance):
-        redata = super().to_representation(instance)  
-        if not Teacher.objects.filter(id=self.user_id).exists():
-            redata.pop('answer')
-
-        return redata
+        representation = super().to_representation(instance)
+        if not self.user_id:
+            representation.pop('answer')
+        return representation
     
-    def validate(self, attrs):
-        print(99999)
-        return super().validate(attrs)
-
+    
 class QuizSerializer(ModelSerializer):
     class Meta:
         model = Quiz
@@ -33,6 +29,11 @@ class QuizSerializer(ModelSerializer):
     
     def to_representation(self, instance):
         redata = super().to_representation(instance)
+        request_user = self.context.get('request')
+        if request_user:
+            user_id = request_user.id
+        else:
+            user_id = None
+        redata['questions'] = QuestionSerializer(instance=instance.question_set.all(), many=True, user_id= user_id).data
         
-        redata['questions'] = QuestionSerializer(instance=instance.question_set.all(), many=True).data
         return redata
