@@ -22,8 +22,17 @@ class QuestionSerializer(ModelSerializer):
 
         return redata
     
+    def validate(self, attrs):
+        print(99999)
+        return super().validate(attrs)
 
 class QuizSerializer(ModelSerializer):
     class Meta:
         model = Quiz
         fields = '__all__'
+    
+    def to_representation(self, instance):
+        redata = super().to_representation(instance)
+        
+        redata['questions'] = QuestionSerializer(instance=instance.question_set.all(), many=True).data
+        return redata
