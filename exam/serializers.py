@@ -5,12 +5,12 @@ from .models import Exam, Result
 
 
 from quiz.models import Question, Quiz
-from quiz.serializers import QuestionSerializer
+from quiz.serializers import QuestionSerializer, QuizSerializer
 
 
 class ExamSerializer(ModelSerializer):
     questions = QuestionSerializer(many=True, read_only=True, required=False)
-
+    quiz = QuizSerializer(many=False, read_only=True, required=False)
     class Meta:
         model = Exam
         fields = "__all__"

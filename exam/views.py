@@ -44,6 +44,5 @@ class ResultListAPIView(ListAPIView):
     
     def get_queryset(self):
         uuid = self.kwargs.get("uuid")
-        print(1111111, uuid)
         
         return Result.objects.filter(exam__quiz__uuid = uuid)
