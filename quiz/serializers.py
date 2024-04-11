@@ -22,7 +22,6 @@ class QuestionSerializer(ModelSerializer):
     
 
 class QuizSerializer(ModelSerializer):
-
     class Meta:
         model = Quiz
         fields = '__all__'
