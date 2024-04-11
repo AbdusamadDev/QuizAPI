@@ -7,33 +7,33 @@ from .models import Quiz, Question
 
 
 class QuestionSerializer(ModelSerializer):
-
+    def __init__(self, instance=None, user_id = None, data=..., **kwargs):
+        self.user_id = user_id
+        super().__init__(instance, data, **kwargs)
+            
     class Meta:
         model = Question
         fields = '__all__'
 
     def to_representation(self, instance):
-        redata = super().to_representation(instance)
-        print(self.user_id)
-        
-        if not Teacher.objects.filter(id=self.user_id).exists():
-            redata.pop('answer')
-        return redata
+        representation = super().to_representation(instance)
+        if not self.user_id:
+            representation.pop('answer')
+        return representation
     
-
+    
 class QuizSerializer(ModelSerializer):
     class Meta:
         model = Quiz
         fields = '__all__'
-
-    def get_questions(self, obj):
-        decoded_token = unhash_token(self.context.get('request').headers)
-        result = QuestionSerializer(instance=obj.question_set.all(), many=True, user_id=decoded_token['user_id'])
-        return result.data
-
+    
     def to_representation(self, instance):
         redata = super().to_representation(instance)
-        redata['begin_date'] = instance.formatted_begin_date
-        redata['end_date'] = instance.formatted_begin_date
-        redata['questions'] = self.get_questions(instance)
+        request_user = self.context.get('request')
+        if request_user:
+            user_id = request_user.id
+        else:
+            user_id = None
+        redata['questions'] = QuestionSerializer(instance=instance.question_set.all(), many=True, user_id= user_id).data
+        
         return redata

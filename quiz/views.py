@@ -37,11 +37,10 @@ class QuizAPIView(generics.ListAPIView):
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
-        context['request'] = context['request']
-        return super().get_serializer_context()
-
-
-
+        context['request'] = self.request.user
+        return context
+    
+     
 class EditQuizAPIView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Quiz.objects.all()
@@ -73,10 +72,10 @@ class ImportQuestionAPIView(APIView):
 
 
 class ExportQuestionAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        quiz_id = request.data.get("quiz_id")
+        quiz_id = request.GET.get("quiz_id")
         # quiz = Quiz.objects.get(id=quiz_id)
         quiz = get_object_or_404(Quiz, id=quiz_id)
         pdf_buffer = generate_quiz_questions_pdf(quiz)
