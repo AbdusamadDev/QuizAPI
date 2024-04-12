@@ -3,10 +3,12 @@ from rest_framework.generics import UpdateAPIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import status, permissions
 from rest_framework.response import Response
-
+from rest_framework.exceptions import APIException
 from .serializers import TeacherSerializer
 from .models import Teacher
 
+from rest_framework import status
+from django.db import IntegrityError
 
 class TeacherRegistrationAPIView(ModelViewSet):
     queryset = Teacher.objects.all()
@@ -23,7 +25,19 @@ class TeacherRegistrationAPIView(ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
+
+        
+        if len(Teacher.objects.filter(phonenumber = serializer.initial_data["phonenumber"])) > 0:
+            raise APIException({"error": "unique"})
+        
         serializer.is_valid(raise_exception=True)
+            
+        # except IntegrityError as e:
+        #     print(111111, e)
+        #     if 'unique constraint' in str(e).lower():
+        #         raise APIException({"error": "unique",  status : status.HTTP_403_FORBIDDEN})
+                
+
         teacher = serializer.save()
 
         # O'qituvchi uchun token generatsiya
