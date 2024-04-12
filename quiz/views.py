@@ -94,7 +94,7 @@ class QuestionAPIView(generics.ListAPIView, generics.UpdateAPIView):
 class ExportQuizAPIView(generics.RetrieveAPIView):
     queryset = Quiz.objects.all()
     serializer_class = serializers.QuizSerializer
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         # Done
