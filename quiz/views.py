@@ -178,7 +178,7 @@ class DeleteQuestionAPIView(generics.DestroyAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Question.objects.all()
     serializer_class = serializers.QuizSerializer
-    lookup_field = "id"
+    
 
 
 class QuizDetailsAPIView(generics.RetrieveAPIView):
