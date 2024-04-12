@@ -21,6 +21,7 @@ class QuestionSerializer(ModelSerializer):
             representation.pop("answer")
         return representation
 
+
 class QuizSerializer(ModelSerializer):
     class Meta:
         model = Quiz
@@ -29,10 +30,11 @@ class QuizSerializer(ModelSerializer):
     def to_representation(self, instance):
         redata = super().to_representation(instance)
         request_user = self.context.get("request")
-        if request_user and hasattr(request_user, 'id'):
+        if request_user and hasattr(request_user, "id"):
             user_id = request_user.id
         else:
             user_id = None
+        print(instance.question_set.all())
         redata["questions"] = QuestionSerializer(
             instance=instance.question_set.all(),
             many=True,

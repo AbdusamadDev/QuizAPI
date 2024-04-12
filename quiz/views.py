@@ -185,3 +185,4 @@ class QuizDetailsAPIView(generics.RetrieveAPIView):
     lookup_field = "uuid"
     queryset = Quiz.objects.all()
     serializer_class = serializers.QuizSerializer
+

@@ -28,26 +28,24 @@ def _import_from_xls(file):
 
 
 def _export_to_pdf(data, limit):
-    # Done
     buffer = BytesIO()
     p = canvas.Canvas(buffer, pagesize=letter)
     p.drawString(100, 800, "Quiz Export")
-    y = 700
-    print(data)
-    p.rect(x=15, y=25, width=190 * 3, height=150 * 5)
-    p.rect(x=25, y=15, width=190 * 3, height=150 * 5)
     p.setTitle(title=data["title"])
     option_layer = 85
     question_index = 1
+    page_height = letter[1]
     if limit is None:
         questions = data["questions"]
     else:
         questions = data["questions"][:limit]
+    p.rect(x=15, y=25, width=190 * 3, height=150 * 5)
+    p.rect(x=25, y=15, width=190 * 3, height=150 * 5)
+    y = 700  # Initial vertical position
     for question in questions:
         print("Parsing: ", question["title"])
-        p.drawString(50, y, f"{question_index}.")
-        words = question["title"].split(" ")
-        split_words = [words[i : i + 13] for i in range(0, len(words), 13)]
+        title_lines = question["title"].split(" ")
+        split_words = [title_lines[i : i + 13] for i in range(0, len(title_lines), 13)]
         for word_chunk in split_words:
             constructed_word = " ".join(word_chunk)
             p.drawString(70, y, constructed_word)
@@ -59,6 +57,12 @@ def _export_to_pdf(data, limit):
         p.drawString(option_layer, y - 75, f"4. {question['option_4']}")
         y -= 100
         question_index += 1
+        if y < 50:  # Check if content exceeds page height
+            p.showPage()  # Create new page
+            p.rect(x=15, y=25, width=190 * 3, height=150 * 5)
+            p.rect(x=25, y=15, width=190 * 3, height=150 * 5)
+            p.setTitle(title=data["title"])
+            y = page_height - 100  # Reset vertical position for new page
     p.showPage()
     p.save()
     buffer.seek(0)
