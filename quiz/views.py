@@ -38,7 +38,7 @@ class QuizAPIView(generics.ListAPIView):
     serializer_class = serializers.QuizSerializer
 
     def get_queryset(self):
-        user = self.request.user
+        user = self.request.user.id
         return Quiz.objects.filter(teacher=user)
 
     def get_serializer_context(self):
