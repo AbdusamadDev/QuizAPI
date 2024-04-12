@@ -57,7 +57,7 @@ def _export_to_pdf(data, limit):
         p.drawString(option_layer, y - 75, f"4. {question['option_4']}")
         y -= 100
         question_index += 1
-        if y < 80:  # Check if content exceeds page height
+        if y < 150:  # Check if content exceeds page height
             p.showPage()  # Create new page
             p.rect(x=15, y=25, width=190 * 3, height=150 * 5)
             p.rect(x=25, y=15, width=190 * 3, height=150 * 5)
