@@ -9,10 +9,12 @@ from .views import (
     TeacherRegistrationAPIView,
     ChangeAccountStatusAPIView,
     EditProfileAPIView,
+    ResetPasswordAPIVIew,
 )
 
 
 urlpatterns = [
+    path("reset/", ResetPasswordAPIVIew.as_view()),
     path(
         "token/refresh/", TokenRefreshView.as_view(), name="token_refresh"
     ),  # bu access tokenni yangliash uchun endpoint. Access Token nisbatan tezroq expire boladi

@@ -1,12 +1,14 @@
+from django.contrib.auth.hashers import check_password, make_password
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.exceptions import APIException
 from rest_framework.generics import UpdateAPIView
 from rest_framework.viewsets import ModelViewSet
+from django.shortcuts import get_object_or_404
 from rest_framework import status, permissions
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, generics
 
-from .serializers import TeacherSerializer
+from .serializers import TeacherSerializer, PasswordResetSerializer
 from .models import Teacher
 
 
@@ -105,4 +107,34 @@ class EditProfileAPIView(UpdateAPIView):
     def put(self, request, *args, **kwargs):
         return Response(
             {"detail": "Method 'PUT' not allowed."}, status=status.HTTP_403_FORBIDDEN
+        )
+
+
+class ResetPasswordAPIVIew(generics.GenericAPIView):
+    serializer_class = PasswordResetSerializer
+    queryset = Teacher.objects.all()
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        old_password = serializer.validated_data.get("old_password")
+        new_password = serializer.validated_data.get("new_password")
+        teacher = get_object_or_404(klass=Teacher, pk=request.user.pk)
+        hashed_password = teacher.password
+
+        # Checking old password
+        if check_password(encoded=hashed_password, password=old_password):
+            new_password = make_password(new_password)
+        else:
+            return Response(
+                {"error": "Incorrect password provided!"},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+        teacher.password = new_password
+        teacher.save()
+
+        return Response(
+            {"data": "Password reset successfully!"}, status=status.HTTP_200_OK
         )

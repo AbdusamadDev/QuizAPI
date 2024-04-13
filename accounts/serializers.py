@@ -24,3 +24,8 @@ class TeacherSerializer(serializers.ModelSerializer):
             data.pop("password", None)
 
         return data
+
+
+class PasswordResetSerializer(serializers.Serializer):
+    old_password = serializers.CharField()
+    new_password = serializers.CharField()
