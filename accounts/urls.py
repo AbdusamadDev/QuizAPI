@@ -5,7 +5,11 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
-from .views import TeacherRegistrationAPIView, ChangeAccountStatusAPIView
+from .views import (
+    TeacherRegistrationAPIView,
+    ChangeAccountStatusAPIView,
+    EditProfileAPIView,
+)
 
 
 urlpatterns = [
@@ -21,15 +25,9 @@ urlpatterns = [
     ),
     path(
         "teachers/<int:pk>/",
-        TeacherRegistrationAPIView.as_view(
-            {
-                "get": "retrieve",
-                "put": "update",
-                "patch": "partial_update",
-                "delete": "destroy",
-            }
-        ),
+        TeacherRegistrationAPIView.as_view({"get": "retrieve"}),
     ),
     path("change-status/<int:pk>/", ChangeAccountStatusAPIView.as_view()),
     # path("token/blacklist/", TokenBlacklistView.as_view(), name="token_blacklist"),
+    path("edit-profile/", EditProfileAPIView.as_view()),
 ]
