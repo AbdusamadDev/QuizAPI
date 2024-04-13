@@ -7,7 +7,7 @@ urlpatterns = [
     path("import/", views.ImportQuizAPIView.as_view()),
     path("export/<int:pk>/", views.ExportQuizAPIView.as_view()),
     path("detail/<uuid:uuid>/", views.QuizDetailsAPIView.as_view()),
-    path("delete/<int:pk>/", views.DeleteQuestionAPIView.as_view()),
+    path("delete/question/<int:pk>/", views.DeleteQuestionAPIView.as_view()),
     path("delete/<int:id>/", views.DeleteQuizAPIView.as_view()),
     path("add_question/", views.AddQuestionAPIView.as_view()),
     # path("data/", views.QuizExportImportView.as_view()),
