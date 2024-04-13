@@ -17,6 +17,8 @@ def _import_from_xls(file):
     for idx in range(len(xls_data)):
         row = xls_data.iloc[idx]
         title = row[0]
+        if not (1 < row[-1] < 4):
+            raise IndexError("Answer index out of range")
         for i in range(1, len(row) - 1, 4):
             question_data = {
                 "title": title,

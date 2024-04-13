@@ -127,7 +127,7 @@ class ExportQuizAPIView(generics.RetrieveAPIView):
 class ImportQuizAPIView(generics.CreateAPIView):
     queryset = Quiz.objects.all()
     serializer_class = serializers.QuizSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         # Done
@@ -138,6 +138,10 @@ class ImportQuizAPIView(generics.CreateAPIView):
         if file.name.endswith(".xls"):
             try:
                 data = _import_from_xls(file)
+            except IndexError as msg:
+                return Response(
+                    {"error": str(msg)}, status=status.HTTP_422_UNPROCESSABLE_ENTITY
+                )
             except Exception:
                 return Response(
                     {"error": "Invalid data structure inside the file!"},
@@ -185,4 +189,3 @@ class QuizDetailsAPIView(generics.RetrieveAPIView):
     lookup_field = "uuid"
     queryset = Quiz.objects.all()
     serializer_class = serializers.QuizSerializer
-
