@@ -129,7 +129,7 @@ class ResetPasswordAPIVIew(generics.GenericAPIView):
         else:
             return Response(
                 {"error": "Incorrect password provided!"},
-                status=status.HTTP_401_UNAUTHORIZED,
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         teacher.password = new_password
