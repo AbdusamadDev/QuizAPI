@@ -67,37 +67,12 @@ class QuestionAPIView(generics.ListAPIView, generics.UpdateAPIView):
     lookup_field = "id"
 
 
-# class ImportQuestionAPIView(APIView):
-#     permission_classes = [IsAuthenticated]
-
-#     def post(self, request):
-#         quiz_id = request.data.get("quiz_id")
-#         file = request.data.get("file")
-#         extract_data(quiz_id, file)
-#         return Response({"recieved": True}, status=status.HTTP_200_OK)
-
-
-# class ExportQuestionAPIView(APIView):
-#     # permission_classes = [IsAuthenticated]
-
-#     def get(self, request):
-#         quiz_id = request.GET.get("quiz_id")
-#         # quiz = Quiz.objects.get(id=quiz_id)
-#         quiz = get_object_or_404(Quiz, id=quiz_id)
-#         pdf_buffer = generate_quiz_questions_pdf(quiz)
-
-#         response = HttpResponse(pdf_buffer.getvalue(), content_type="application/pdf")
-#         response["Content-Disposition"] = 'attachment; filename="quiz_questions.pdf"'
-#         return response
-
-
-class ExportQuizAPIView(generics.RetrieveAPIView):
+class BaseExportQuizAPIView(generics.RetrieveAPIView):
     queryset = Quiz.objects.all()
     serializer_class = serializers.QuizSerializer
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        # Done
         limit = request.query_params.get("questions_limit", None)
         instance = self.get_object()
         if limit is not None:
@@ -109,25 +84,38 @@ class ExportQuizAPIView(generics.RetrieveAPIView):
                     },
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-        print(limit)
+
         serializer = self.get_serializer(instance)
-        pdf_file = _export_to_pdf(serializer.data, limit)
-        xls_file = _export_to_xls(serializer.data, limit)
+        return self.export(serializer.data, limit)
 
-        response = HttpResponse(content_type="application/zip")
-        response["Content-Disposition"] = 'attachment; filename="quiz_export.zip"'
+    def export(self, data, limit):
+        raise NotImplementedError("Export method must be implemented in subclasses!")
 
-        with zipfile.ZipFile(response, "w") as zip_file:
-            zip_file.writestr("quiz.pdf", pdf_file.getvalue())
-            zip_file.writestr("quiz.xls", xls_file.getvalue())
 
+class ExportPDFQuizAPIView(BaseExportQuizAPIView):
+    def export(self, data, limit):
+        print("Data: ", data)
+        pdf_file = _export_to_pdf(data, limit)
+        print(pdf_file)
+        response = HttpResponse(content_type="application/pdf")
+        response["Content-Disposition"] = 'attachment; filename="quiz_export.pdf"'
+        response.write(pdf_file.getvalue())
+        return response
+
+
+class ExportXLSQuizAPIView(BaseExportQuizAPIView):
+    def export(self, data, limit):
+        xls_file = _export_to_xls(data, limit)
+        response = HttpResponse(content_type="application/vnd.ms-excel")
+        response["Content-Disposition"] = 'attachment; filename="quiz_export.xls"'
+        response.write(xls_file.getvalue())
         return response
 
 
 class ImportQuizAPIView(generics.CreateAPIView):
     queryset = Quiz.objects.all()
     serializer_class = serializers.QuizSerializer
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         # Done
@@ -182,7 +170,6 @@ class DeleteQuestionAPIView(generics.DestroyAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Question.objects.all()
     serializer_class = serializers.QuizSerializer
-    
 
 
 class QuizDetailsAPIView(generics.RetrieveAPIView):
