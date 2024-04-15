@@ -25,6 +25,7 @@ class TeacherSerializer(serializers.ModelSerializer):
 
         return data
 
+    
 
 class PasswordResetSerializer(serializers.Serializer):
     old_password = serializers.CharField()
