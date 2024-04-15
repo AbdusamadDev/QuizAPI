@@ -94,9 +94,7 @@ class BaseExportQuizAPIView(generics.RetrieveAPIView):
 
 class ExportPDFQuizAPIView(BaseExportQuizAPIView):
     def export(self, data, limit):
-        print("Data: ", data)
         pdf_file = _export_to_pdf(data, limit)
-        print(pdf_file)
         response = HttpResponse(content_type="application/pdf")
         response["Content-Disposition"] = 'attachment; filename="quiz_export.pdf"'
         response.write(pdf_file.getvalue())

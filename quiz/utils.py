@@ -8,6 +8,8 @@ import pandas as pd
 import openpyxl
 
 from .models import Question, Quiz
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.platypus import Paragraph
 
 
 def _import_from_xls(file):
@@ -32,8 +34,35 @@ def _import_from_xls(file):
 def _export_to_pdf(data, limit):
     buffer = BytesIO()
     p = canvas.Canvas(buffer, pagesize=letter)
-    p.drawString(100, 800, "Quiz Export")
-    p.setTitle(title=data["title"])
+    page_width = 612
+    page_height = 792
+    margin_top = page_height * 0.05
+
+    text_x = (page_width - p.stringWidth("Quiz Export")) / 2
+
+    # Calculate Y-coordinate based on margin top and font size (adjust if needed)
+    text_y = page_height - margin_top - 14
+
+    # Draw "Quiz Export" centered
+    p.drawString(text_x, text_y, data['title'])
+    p.drawString(85, text_y-20, f"Umumiy savollar soni: {len(data['questions'])} ta")
+    p.drawString(85, text_y-40, f"Ishlash uchun vaxt: {data['solving_time']} daqiqa")
+    des = data['description']
+    dess = []
+    t = ''
+    for item in des:
+        t+= item
+        if len(t) > 80:
+            dess.append(t)
+            t = ''
+    if len(dess) == 0:
+        dess.append(des)
+    text_y -= 60
+    p.drawString(85, text_y, f"Izoh:")
+    for d in dess:
+        text_y -= 20
+        p.drawString(85, text_y, d)
+
     option_layer = 85
     question_index = 1
     page_height = letter[1]
@@ -43,20 +72,20 @@ def _export_to_pdf(data, limit):
         questions = data["questions"][:limit]
     p.rect(x=15, y=25, width=190 * 3, height=150 * 5)
     p.rect(x=25, y=15, width=190 * 3, height=150 * 5)
-    y = 700  # Initial vertical position
+    y = text_y-20  # Initial vertical position
+    count = 0
     for question in questions:
-        print("Parsing: ", question["title"])
+        count += 1
         title_lines = question["title"].split(" ")
         split_words = [title_lines[i : i + 13] for i in range(0, len(title_lines), 13)]
         for word_chunk in split_words:
             constructed_word = " ".join(word_chunk)
-            p.drawString(70, y, constructed_word)
-            y -= 20
-        p.drawString(option_layer, y - 15, "_______" * 3)
-        p.drawString(option_layer, y - 30, f"1. {question['option_1']}")
-        p.drawString(option_layer, y - 45, f"2. {question['option_2']}")
-        p.drawString(option_layer, y - 60, f"3. {question['option_3']}")
-        p.drawString(option_layer, y - 75, f"4. {question['option_4']}")
+            p.drawString(x=70, y=y, text=f"{count} - Savol: {constructed_word}")
+        
+        p.drawString(option_layer, y - 30, f"A. {question['option_1']}")
+        p.drawString(option_layer, y - 45, f"B. {question['option_2']}")
+        p.drawString(option_layer, y - 60, f"C. {question['option_3']}")
+        p.drawString(option_layer, y - 75, f"D. {question['option_4']}")
         y -= 100
         question_index += 1
         if y < 150:  # Check if content exceeds page height
@@ -65,6 +94,36 @@ def _export_to_pdf(data, limit):
             p.rect(x=25, y=15, width=190 * 3, height=150 * 5)
             p.setTitle(title=data["title"])
             y = page_height - 100  # Reset vertical position for new page
+    count = 0
+    y = 750
+    x = 110
+    p.showPage()
+    p.drawString(70, y, "Savol: ")
+    p.drawString(70, y-30, "Javob: ")
+    for question in questions:
+        if y < 150:  
+            p.showPage()
+            p.rect(x=15, y=25, width=190 * 3, height=150 * 5)
+            p.rect(x=25, y=15, width=190 * 3, height=150 * 5)
+            p.setTitle(title=data["title"])
+            y = page_height - 100
+        count += 1
+        p.drawString(x, y, str(count))
+
+        answer = Question.objects.get(id = question['id']).answer
+        v = " ABCD" 
+        p.drawString(x, y-30, v[answer])
+        
+        x+= 20
+        if x > 500:
+            x = 110
+            y-= 100
+            p.drawString(70, y, "Savol: ")
+            p.drawString(70, y-30, "Javob: ")            
+        # break
+
+
+        
     p.showPage()
     p.save()
     buffer.seek(0)

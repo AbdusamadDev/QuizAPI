@@ -34,7 +34,6 @@ class QuizSerializer(ModelSerializer):
             user_id = request_user.id
         else:
             user_id = None
-        print(instance.question_set.all())
         redata["questions"] = QuestionSerializer(
             instance=instance.question_set.all(),
             many=True,
