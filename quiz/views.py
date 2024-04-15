@@ -70,23 +70,34 @@ class QuestionAPIView(generics.ListAPIView, generics.UpdateAPIView):
 class BaseExportQuizAPIView(generics.RetrieveAPIView):
     queryset = Quiz.objects.all()
     serializer_class = serializers.QuizSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         limit = request.query_params.get("questions_limit", None)
         instance = self.get_object()
         if limit is not None:
-            if limit not in range(1, instance.limit_questions):
+            if limit.isdigit():
+                if int(limit) in range(1, instance.limit_questions):
+                    serializer = self.get_serializer(instance)
+                    return self.export(serializer.data, int(limit))
+                else:
+                    return Response(
+                        {
+                            "error": "The question limit is out of range!",
+                            "tip": f"Provide number in range of (1, {instance.limit_questions})",
+                        },
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+            else:
                 return Response(
-                    {
-                        "error": "The question limit is out of range!",
-                        "tip": f"Provide number in range of (1, {instance.limit_questions})",
-                    },
+                    {"error": "Please provide valid integer!"},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-
-        serializer = self.get_serializer(instance)
-        return self.export(serializer.data, limit)
+        else:
+            return Response(
+                {"error": "Please provide limit of questions!"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
     def export(self, data, limit):
         raise NotImplementedError("Export method must be implemented in subclasses!")
