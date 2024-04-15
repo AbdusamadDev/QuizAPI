@@ -70,7 +70,6 @@ class QuestionAPIView(generics.ListAPIView, generics.UpdateAPIView):
 class BaseExportQuizAPIView(generics.RetrieveAPIView):
     queryset = Quiz.objects.all()
     serializer_class = serializers.QuizSerializer
-    permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
         limit = request.query_params.get("questions_limit", 10)
