@@ -1,15 +1,15 @@
 from django.urls import path
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
-    # TokenBlacklistView,
     TokenRefreshView,
 )
 
 from .views import (
+    RetrieveTeacherDetailsAPIView,
     TeacherRegistrationAPIView,
     ChangeAccountStatusAPIView,
-    EditProfileAPIView,
     ResetPasswordAPIVIew,
+    EditProfileAPIView,
 )
 
 
@@ -26,10 +26,10 @@ urlpatterns = [
         TeacherRegistrationAPIView.as_view({"post": "create", "get": "list"}),
     ),
     path(
-        "teachers/<int:pk>/",
-        TeacherRegistrationAPIView.as_view({"get": "retrieve"}),
+        "teachers/",
+        RetrieveTeacherDetailsAPIView.as_view(),
     ),
     path("change-status/<int:pk>/", ChangeAccountStatusAPIView.as_view()),
-    # path("token/blacklist/", TokenBlacklistView.as_view(), name="token_blacklist"),
+    # path("token/blacklist/", TokenBlacklistVisew.as_view(), name="token_blacklist"),
     path("edit-profile/", EditProfileAPIView.as_view()),
 ]

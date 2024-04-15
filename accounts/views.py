@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework import status, permissions
 from rest_framework.response import Response
 from rest_framework import status, generics
+from rest_framework.views import APIView
 
 from .serializers import TeacherSerializer, PasswordResetSerializer
 from .models import Teacher
@@ -56,6 +57,23 @@ class TeacherRegistrationAPIView(ModelViewSet):
 
         # Success response & JWT Token
         return Response(token_data, status=status.HTTP_201_CREATED)
+
+
+class RetrieveTeacherDetailsAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        teacher = get_object_or_404(Teacher, pk=request.user.id)
+        return Response(
+            {
+                "data": {
+                    "id": teacher.pk,
+                    "fullname": teacher.fullname,
+                    "phonenumber": teacher.phonenumber,
+                }
+            },
+            status=status.HTTP_200_OK,
+        )
 
 
 class ChangeAccountStatusAPIView(UpdateAPIView):
