@@ -1,6 +1,10 @@
 from django.db import models
 from uuid import uuid4
 
+from accounts.models import Teacher
+
+
+from quiz.validators import validate_answer_number
 
 class CustomBaseMode(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
@@ -10,10 +14,9 @@ class CustomBaseMode(models.Model):
         abstract = True
 
 
-
 class Quiz(CustomBaseMode):
     uuid = models.UUIDField(unique=True, default=uuid4)
-    teacher = models.ForeignKey('Teacher', on_delete=models.SET_NULL)
+    teacher = models.ForeignKey(Teacher, on_delete=models.CASCADE, null=True)
     title = models.CharField(max_length=200)
     description = models.TextField()
     begin_date = models.DateTimeField()
@@ -24,17 +27,23 @@ class Quiz(CustomBaseMode):
     def __str__(self) -> str:
         return self.title
 
+    @property
+    def formatted_begin_date(self):
+        return self.begin_date.strftime('%Y-%m-%dT%H:%M')
+
+    @property
+    def formatted_end_date(self):
+        return self.end_date.strftime('%Y-%m-%dT%H:%M')
+
 
 class Question(CustomBaseMode):
-    quiz = models.ForeignKey('Quiz', on_delete=models.SET_NULL)
+    quiz = models.ForeignKey("Quiz", on_delete=models.CASCADE, null=True)
     title = models.CharField(max_length=200)
     option_1 = models.CharField(max_length=200)
     option_2 = models.CharField(max_length=200)
     option_3 = models.CharField(max_length=200)
     option_4 = models.CharField(max_length=200)
-    answer = models.CharField(max_length=200)
+    answer = models.IntegerField(validators=[validate_answer_number])
 
     def __str__(self) -> str:
         return f"{self.quiz} -> {self.title}"
-
-
