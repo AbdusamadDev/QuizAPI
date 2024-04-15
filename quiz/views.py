@@ -121,7 +121,7 @@ class ImportQuizAPIView(generics.CreateAPIView):
         if not file:
             return Response({"error": "Please provide a file"}, status=400)
 
-        if file.name.endswith(".xls"):
+        if file.name.endswith(".xls") or file.name.endswith(".xlsx"):
             try:
                 data = _import_from_xls(file)
             except IndexError as msg:
