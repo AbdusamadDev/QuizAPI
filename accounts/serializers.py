@@ -1,6 +1,6 @@
 from django.contrib.auth.hashers import make_password
+from rest_framework.exceptions import ValidationError
 from rest_framework import serializers
-
 
 from .models import Teacher
 
@@ -14,6 +14,12 @@ class TeacherSerializer(serializers.ModelSerializer):
     def validate_password(self, password):
         return make_password(password)
 
+    def validate_phonenumber(self, phonenumber):
+        if Teacher.objects.filter(phonenumber=phonenumber).exists():
+            print("The data: ", phonenumber)
+            raise ValidationError({"error": "unique"})
+        return phonenumber
+
     def to_representation(self, instance):
         data = super().to_representation(instance)
         request = self.context.get("request")
@@ -25,7 +31,6 @@ class TeacherSerializer(serializers.ModelSerializer):
 
         return data
 
-    
 
 class PasswordResetSerializer(serializers.Serializer):
     old_password = serializers.CharField()

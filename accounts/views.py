@@ -124,7 +124,8 @@ class EditProfileAPIView(UpdateAPIView):
 
     def put(self, request, *args, **kwargs):
         return Response(
-            {"detail": "Method 'PUT' not allowed."}, status=status.HTTP_403_FORBIDDEN
+            {"detail": "Method 'PUT' not allowed."},
+            status=status.HTTP_405_METHOD_NOT_ALLOWED,
         )
 
 
