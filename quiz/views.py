@@ -73,17 +73,16 @@ class BaseExportQuizAPIView(generics.RetrieveAPIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        limit = request.query_params.get("questions_limit", None)
+        limit = request.query_params.get("questions_limit", 10)
         instance = self.get_object()
-        if limit is not None:
-            if limit not in range(1, instance.limit_questions):
-                return Response(
-                    {
-                        "error": "The question limit is out of range!",
-                        "tip": f"Provide number in range of (1, {instance.limit_questions})",
-                    },
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+        if limit not in range(1, instance.limit_questions):
+            return Response(
+                {
+                    "error": "The question limit is out of range!",
+                    "tip": f"Provide number in range of (1, {instance.limit_questions})",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         serializer = self.get_serializer(instance)
         return self.export(serializer.data, limit)
