@@ -15,10 +15,29 @@ class TeacherSerializer(serializers.ModelSerializer):
         return make_password(password)
 
     def validate_phonenumber(self, phonenumber):
-        if Teacher.objects.filter(phonenumber=phonenumber).exists():
-            print("The data: ", phonenumber)
-            raise ValidationError({"error": "unique"})
+        if self.context["request"].method != "PATCH":
+            print(self.context["request"].method)
+            if Teacher.objects.filter(phonenumber=phonenumber).exists():
+                raise ValidationError({"error": "unique"})
         return phonenumber
+
+    def validate(self, attrs):
+        phonenumber = attrs.get("phonenumber", None)
+        if phonenumber is not None:
+            existing_teacher = Teacher.objects.filter(phonenumber=phonenumber).first()
+            if existing_teacher:
+                # Get the current user's phone number
+                current_user_phonenumber = self.context["request"].user.phonenumber
+                # Check if the phone number in the database is the same as the current user's phone number
+                if existing_teacher.phonenumber == current_user_phonenumber:
+                    # If it's the current user's phone number, remove it from the attributes
+                    attrs.pop("phonenumber")
+                else:
+                    # If it's not the current user's phone number, raise a validation error
+                    raise serializers.ValidationError(
+                        "Phone number already exists for another user"
+                    )
+        return attrs
 
     def to_representation(self, instance):
         data = super().to_representation(instance)

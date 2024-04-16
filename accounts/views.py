@@ -122,13 +122,6 @@ class EditProfileAPIView(UpdateAPIView):
                 {"detail": "Teacher not found."}, status=status.HTTP_404_NOT_FOUND
             )
 
-    def put(self, request, *args, **kwargs):
-        return Response(
-            {"detail": "Method 'PUT' not allowed."},
-            status=status.HTTP_405_METHOD_NOT_ALLOWED,
-        )
-
-
 class ResetPasswordAPIVIew(generics.GenericAPIView):
     serializer_class = PasswordResetSerializer
     queryset = Teacher.objects.all()
